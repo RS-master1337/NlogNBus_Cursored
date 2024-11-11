@@ -14,6 +14,15 @@
             min-height: 100vh;
             background: #0a73b9;
             padding-top: 20px;
+            position: relative;
+        }
+        
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 149px;
+            height: 85px;
         }
         
         .header {
@@ -38,9 +47,76 @@
         canvas {
             border: 2px solid rgb(255, 255, 255);
         }
+
+        .player-form {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .player-form input {
+            padding: 5px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .player-form button {
+            background: #610FC9;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .player-form button:hover {
+            background: #9039FF;
+        }
+
+        .leaderboard {
+            position: absolute;
+            top: 120px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .leaderboard h3 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .leaderboard ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .leaderboard li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
     </style>
 </head>
 <body>
+    <img src="nlogn-logo.svg" alt="NlogN Logo" class="logo">
+    <div class="player-form">
+        <input type="text" id="playerName" placeholder="Enter your name">
+        <button onclick="setPlayerName()">Set Name</button>
+    </div>
+    <div class="leaderboard">
+        <h3>Top Scores</h3>
+        <ul id="leaderboardList"></ul>
+    </div>
     <div class="header">
         <h1>NlogN Bus Adventure</h1>
         <p>Jump with Space or Up Arrow</p>

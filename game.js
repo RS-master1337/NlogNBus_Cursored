@@ -284,7 +284,8 @@ function updateGame() {
 function drawScore() {
     ctx.fillStyle = 'white';
     ctx.font = '20px Arial';
-    ctx.fillText(`Score: ${score}`, 20, 30);
+    ctx.fillText(`Player: ${playerName}`, 20, 30);
+    ctx.fillText(`Score: ${score}`, 20, 60);
 }
 
 function gameLoop() {
@@ -314,6 +315,13 @@ function gameLoop() {
         ctx.fillText('Game Over!', canvas.width/2 - 100, canvas.height/2);
         ctx.font = '20px Arial';
         ctx.fillText('Press R to restart', canvas.width/2 - 80, canvas.height/2 + 40);
+        
+        // Add score to leaderboard if it's a new game over
+        if (!scoreAdded) {
+            leaderboard.push({ name: playerName, score: score });
+            updateLeaderboard();
+            scoreAdded = true;
+        }
     } else {
         updateGame();
     }
@@ -324,6 +332,7 @@ function gameLoop() {
 // Restart game handler
 document.addEventListener('keydown', (e) => {
     if (e.code === 'KeyR' && isGameOver) {
+        // Reset game state
         isGameOver = false;
         score = 0;
         gameSpeed = 5;
@@ -331,12 +340,15 @@ document.addEventListener('keydown', (e) => {
         trees.length = 0;
         clouds.length = 0;
         raindrops.length = 0;
-        bus.y = 200;
+        bus.y = groundY - 45; // Reset to initial position
         bus.jumping = false;
+        bus.jumpForce = 0;
         biomeTimer = 0;
         weatherTimer = 0;
         weather = 'sunny';
-        roadMarkingOffset = 0; // Reset road marking animation
+        roadMarkingOffset = 0;
+        scoreAdded = false; // Reset score added flag
+        lastObstacleTime = 0;
     }
 });
 
@@ -483,6 +495,47 @@ function drawSky() {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, groundY);
 }
+
+// Add these variables at the top
+let playerName = localStorage.getItem('playerName') || 'Anonymous';
+let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+let scoreAdded = false; // Add this variable
+
+// Add this function to handle player name setting
+function setPlayerName() {
+    const nameInput = document.getElementById('playerName');
+    if (nameInput.value.trim()) {
+        playerName = nameInput.value.trim();
+        localStorage.setItem('playerName', playerName);
+        nameInput.value = '';
+        updateLeaderboard();
+    }
+}
+
+// Add function to update leaderboard
+function updateLeaderboard() {
+    const leaderboardList = document.getElementById('leaderboardList');
+    leaderboardList.innerHTML = '';
+    
+    // Sort leaderboard by score
+    leaderboard.sort((a, b) => b.score - a.score);
+    
+    // Keep only top 10 scores
+    leaderboard = leaderboard.slice(0, 10);
+    
+    // Update localStorage
+    localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+    
+    // Update display
+    leaderboard.forEach((entry, index) => {
+        const li = document.createElement('li');
+        li.textContent = `${index + 1}. ${entry.name}: ${entry.score}`;
+        leaderboardList.appendChild(li);
+    });
+}
+
+// Initialize leaderboard on page load
+updateLeaderboard();
 
 // Start the game
 gameLoop(); 
